@@ -1,8 +1,6 @@
 import os
 
 from fastapi import FastAPI, status, HTTPException, Depends
-import psycopg
-from psycopg.rows import dict_row
 from sqlalchemy.orm import Session
 
 from . import models, schemas
@@ -10,18 +8,6 @@ from .database import engine, get_db
 
 # db connection
 models.Base.metadata.create_all(bind=engine)
-try:
-    DB_CONN = psycopg.connect(f'\
-                              dbname={os.environ["DB_NAME"]}\
-                              user={os.environ["DB_USER"]}\
-                              password={os.environ["DB_PASSWORD"]}\
-                              host={os.environ["DB_HOST"]}',
-                              row_factory=dict_row
-    )
-except Exception as error:
-    print(f"Error: {error}")
-    raise error
-print("successful connection!")
 
 # FastAPI app
 app = FastAPI()
