@@ -1,13 +1,11 @@
 import os
 
 from fastapi import FastAPI, Response, status, HTTPException, Depends
-# from fastapi.params import Body
-from pydantic import BaseModel
 import psycopg
 from psycopg.rows import dict_row
 from sqlalchemy.orm import Session
 
-from . import models
+from . import models, schemas
 from .database import engine, get_db
 
 # db connection
@@ -26,14 +24,6 @@ except Exception as error:
 print("successful connection!")
 
 cursor = DB_CONN.cursor()
-
-# Defining a pydantic model
-# This creates a validation for data sent by the client side
-class Post(BaseModel):
-    title: str
-    content: str | int
-    published: bool=True
-    # rating: Optional[int]=None # `Optional` module imported from typing not fastapi
 
 my_posts = [{'id':1, 'title': 'title of the post1', 'content': 'content of post1'},
             {'id':2, 'title': 'favourite food', 'content': 'I like pizza!'}]
@@ -57,7 +47,7 @@ def get_posts(db: Session=Depends(get_db)):
 #* After the Post class is created
 #* Changed status code from 200 to 201
 @app.post('/posts', status_code=status.HTTP_201_CREATED)
-def create_posts(post: Post, db: Session=Depends(get_db)):
+def create_posts(post: schemas.PostCreate, db: Session=Depends(get_db)):
     # new_post = models.Post(title=post.title, content=post.content, published=post.published)
     new_post = models.Post(**post.model_dump())
     db.add(new_post)
@@ -93,9 +83,8 @@ def delete_post(post_id: int, db: Session=Depends(get_db)):
     post_to_be_deleted.delete(synchronize_session=False)
     db.commit()
 
-#! CONTINUE FROM UDPATE
 @app.put('/posts/{post_id}')
-def update_post(post_id: int, post: Post, db: Session=Depends(get_db)):
+def update_post(post_id: int, post: schemas.PostUpdate, db: Session=Depends(get_db)):
     post_query = db.query(models.Post).filter(models.Post.id == post_id)
     post_to_be_updated = post_query.first()
     # cursor.execute("""
