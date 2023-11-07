@@ -6,10 +6,12 @@ from sqlalchemy.orm import Session
 from app import models, schemas
 from app.database import get_db
 
-router = APIRouter()
+router = APIRouter(
+    prefix='/posts'
+)
 
 
-@router.get('/posts', response_model=List[schemas.PostResponse])
+@router.get('/', response_model=List[schemas.PostResponse])
 # If we add `schemas.PostResponse` as the `repsose_model`, it does not work because
 # we are returning a list of posts, whereas the response model tries to fit that
 # into the model for one single post as is defined in PostResponse 🤦‍♂️
@@ -20,7 +22,7 @@ def get_posts(db: Session = Depends(get_db)):
     return posts
 
 
-@router.post('/posts', status_code=status.HTTP_201_CREATED, response_model=schemas.PostResponse)
+@router.post('/', status_code=status.HTTP_201_CREATED, response_model=schemas.PostResponse)
 def create_posts(post: schemas.PostCreate, db: Session = Depends(get_db)):
     # ALT: new_post = models.Post(title=post.title, content=post.content, published=post.published)
     new_post = models.Post(**post.model_dump())
@@ -31,7 +33,7 @@ def create_posts(post: schemas.PostCreate, db: Session = Depends(get_db)):
     return new_post
 
 
-@router.get('/posts/{post_id}', response_model=schemas.PostResponse)
+@router.get('/{post_id}', response_model=schemas.PostResponse)
 def get_post(post_id: int, db: Session = Depends(get_db)):
     fetched_post = db.query(models.Post).get(
         {"id": post_id})  # get finds via PK
@@ -44,7 +46,7 @@ def get_post(post_id: int, db: Session = Depends(get_db)):
     return fetched_post
 
 
-@router.delete('/posts/{post_id}', status_code=status.HTTP_204_NO_CONTENT)
+@router.delete('/{post_id}', status_code=status.HTTP_204_NO_CONTENT)
 def delete_post(post_id: int, db: Session = Depends(get_db)):
     post_to_be_deleted = db.query(models.Post).filter(
         models.Post.id == post_id).first()
@@ -58,7 +60,7 @@ def delete_post(post_id: int, db: Session = Depends(get_db)):
     db.commit()
 
 
-@router.put('/posts/{post_id}', response_model=schemas.PostResponse)
+@router.put('/{post_id}', response_model=schemas.PostResponse)
 def update_post(post_id: int, post: schemas.PostUpdate, db: Session = Depends(get_db)):
     post_query = db.query(models.Post).filter(models.Post.id == post_id)
     post_to_be_updated = post_query.first()
