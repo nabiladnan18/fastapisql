@@ -4,7 +4,7 @@ from typing import List
 from fastapi import FastAPI, status, HTTPException, Depends
 from sqlalchemy.orm import Session
 
-from . import models, schemas
+from . import models, schemas, utils
 from .database import engine, get_db
 
 # db connection
@@ -30,11 +30,8 @@ def get_posts(db: Session = Depends(get_db)):
     return posts
 
 
-@app.post('/posts',
-          status_code=status.HTTP_201_CREATED,
-          response_model=schemas.PostResponse)
+@app.post('/posts', status_code=status.HTTP_201_CREATED, response_model=schemas.PostResponse)
 def create_posts(post: schemas.PostCreate, db: Session = Depends(get_db)):
-
     # ALT: new_post = models.Post(title=post.title, content=post.content, published=post.published)
     new_post = models.Post(**post.model_dump())
     db.add(new_post)
@@ -48,7 +45,6 @@ def create_posts(post: schemas.PostCreate, db: Session = Depends(get_db)):
 def get_post(post_id: int, db: Session = Depends(get_db)):
     fetched_post = db.query(models.Post).get(
         {"id": post_id})  # get finds via PK
-
     if not fetched_post:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -62,7 +58,6 @@ def get_post(post_id: int, db: Session = Depends(get_db)):
 def delete_post(post_id: int, db: Session = Depends(get_db)):
     post_to_be_deleted = db.query(models.Post).filter(
         models.Post.id == post_id).first()
-
     if not post_to_be_deleted:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -74,12 +69,9 @@ def delete_post(post_id: int, db: Session = Depends(get_db)):
 
 
 @app.put('/posts/{post_id}', response_model=schemas.PostResponse)
-def update_post(post_id: int,
-                post: schemas.PostUpdate,
-                db: Session = Depends(get_db)):
+def update_post(post_id: int, post: schemas.PostUpdate, db: Session = Depends(get_db)):
     post_query = db.query(models.Post).filter(models.Post.id == post_id)
     post_to_be_updated = post_query.first()
-
     if not post_to_be_updated:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -95,6 +87,12 @@ def update_post(post_id: int,
 @app.post('/users', status_code=status.HTTP_201_CREATED,
           response_model=schemas.UserResponse)
 def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
+
+    # create a hash for the pw
+    hashed_user_pw = utils.hashed(user.password)
+    # update the pydantic model
+    user.password = hashed_user_pw
+
     new_user = models.User(**user.model_dump())
     db.add(new_user)
     db.commit()
@@ -107,10 +105,7 @@ def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
 def get_user(user_id: int, db: Session = Depends(get_db)):
     # user = db.query(models.User).\
     #     filter(models.User.id == user_id).first()
-    user = db.query(models.User).get({
-        "id": user_id
-    })
-
+    user = db.query(models.User).get({"id": user_id})
     if not user:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
