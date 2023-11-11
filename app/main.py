@@ -4,7 +4,7 @@ from fastapi import FastAPI
 
 from . import models
 from .database import engine
-from .routers import posts, users
+from .routers import auth, posts, users
 
 # db connection
 models.Base.metadata.create_all(bind=engine)
@@ -15,6 +15,7 @@ app = FastAPI()
 
 app.include_router(posts.router)
 app.include_router(users.router)
+app.include_router(auth.router)
 
 
 @app.get('/')
@@ -23,6 +24,5 @@ async def root():
 
 # For Debugging for now
 # In future that's the ingress of the api server
-# import uvicorn
 # if __name__ == '__main__':
 #     uvicorn.run(app, host='0.0.0.0', port='8000')
