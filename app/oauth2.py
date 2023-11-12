@@ -6,17 +6,17 @@ from fastapi import status, Depends, HTTPException
 from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
 
-from app.schemas import TokenData
+from .schemas import TokenData
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl='login')
 
-ALGORITHM = 'HS256'
-ACCESS_TOKEN_EXPIRATION_MINUTES = 30
+ALGORITHM = os.environ["ALGORITHM"]
+ACCESS_TOKEN_EXPIRATION_MINUTES = os.environ["ACCESS_TOKEN_EXPIRATION_MINUTES"]
 
 
 def create_access_token(data: dict):
     to_encode = data.copy()
-    expire = datetime.utcnow() + timedelta(minutes=ACCESS_TOKEN_EXPIRATION_MINUTES)
+    expire = datetime.utcnow() + timedelta(minutes=int(ACCESS_TOKEN_EXPIRATION_MINUTES))
     to_encode.update({'exp': expire})
 
     return jwt.encode(
