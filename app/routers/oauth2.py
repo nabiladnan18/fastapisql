@@ -1,9 +1,9 @@
 import os
 from datetime import datetime, timedelta
 from typing import Annotated
+
 from fastapi import status, Depends, HTTPException
 from fastapi.security import OAuth2PasswordBearer
-
 from jose import JWTError, jwt
 
 from app.schemas import TokenData
