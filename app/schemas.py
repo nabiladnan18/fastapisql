@@ -54,3 +54,9 @@ class UserResponse(BaseModel):
 
     class Config:
         from_attributes = True
+
+
+# No longer needed as OAuth2RequestForm is being used
+# class UserLogin(BaseModel):
+#     email: EmailStr
+#     password: str
