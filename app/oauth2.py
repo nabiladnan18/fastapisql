@@ -5,8 +5,11 @@ from typing import Annotated
 from fastapi import status, Depends, HTTPException
 from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
+from sqlalchemy.orm import Session
 
+from app import models
 from .schemas import TokenData
+from .database import get_db
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl='login')
 
@@ -38,8 +41,13 @@ def verify_access_token(token: str, credentials_exception):
         raise credentials_exception
 
 
-def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]):
+def get_current_user(
+        token: Annotated[str, Depends(oauth2_scheme)],
+        db: Annotated[Session, Depends(get_db)]):
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED, headers={'WWW-Authenticate': 'Bearer'})
 
-    return verify_access_token(token, credentials_exception)
+    token = verify_access_token(token, credentials_exception)
+    user = db.query(models.User).filter(models.User.id == token.id).first()
+
+    return user
