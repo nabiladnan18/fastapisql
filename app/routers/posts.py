@@ -52,15 +52,16 @@ def get_post(post_id: int, db: Session = Depends(get_db), current_user: int = De
 
 @router.delete('/{post_id}', status_code=status.HTTP_204_NO_CONTENT)
 def delete_post(post_id: int, db: Session = Depends(get_db), current_user: int = Depends(get_current_user)):
-    post_to_be_deleted = db.query(models.Post).filter(
-        models.Post.id == post_id).first()
+    post_query = db.query(models.Post).filter(
+        models.Post.id == post_id)
+    post_to_be_deleted = post_query.first()
     if not post_to_be_deleted:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f"Post with post id: {post_id} not found."
         )
-
-    post_to_be_deleted.delete(synchronize_session=False)
+    #! The query needs to be "deleted" not the post itself 🤔
+    post_query.delete(synchronize_session=False)
     db.commit()
 
 
@@ -73,7 +74,7 @@ def update_post(post_id: int, post: schemas.PostUpdate, db: Session = Depends(ge
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f"Post with post id: {post_id} not found."
         )
-
+    #! The query needs to be "updated" not the post itself 🤔
     post_query.update(post.model_dump(), synchronize_session=False)
     db.commit()
 
