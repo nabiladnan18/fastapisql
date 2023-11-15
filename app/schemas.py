@@ -8,6 +8,20 @@ from pydantic import BaseModel, EmailStr
 # This creates a validation for data sent by the client side
 
 
+class UserCreate(BaseModel):
+    email: EmailStr
+    password: str
+
+
+class UserResponse(BaseModel):
+    id: int
+    created_at: datetime
+    email: EmailStr
+
+    class Config:
+        from_attributes = True
+
+
 class PostBase(BaseModel):
     title: str
     content: str | int
@@ -30,6 +44,9 @@ class PostResponse(PostBase):
     # published: bool
     id: int
     created_at: datetime
+    owner_id: int
+    # Returns the details of the user
+    owner: UserResponse
 
     """
     We add the `class Config` because we would use the ORM to return the data
@@ -42,25 +59,11 @@ class PostResponse(PostBase):
         # orm_mode = True
         from_attributes = True
 
-
-class UserCreate(BaseModel):
-    email: EmailStr
-    password: str
-
-
-class UserResponse(BaseModel):
-    id: int
-    created_at: datetime
-    email: EmailStr
-
-    class Config:
-        from_attributes = True
-
-
 # No longer needed as OAuth2RequestForm is being used
 # class UserLogin(BaseModel):
 #     email: EmailStr
 #     password: str
+
 
 class Token(BaseModel):
     access_token: str
