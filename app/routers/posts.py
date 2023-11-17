@@ -1,6 +1,7 @@
 from typing import List, Optional
 
 from fastapi import status, HTTPException, Depends, APIRouter
+from sqlalchemy import or_
 from sqlalchemy.orm import Session
 
 from .. import models, schemas
@@ -20,11 +21,17 @@ router = APIRouter(
 # This is why need to import List[] from typing library
 def get_posts(db: Session = Depends(get_db), current_user: dict = Depends(get_current_user),
               limit: int = 10, skip: int = 0, search: Optional[str] = ''):
-    posts = db.query(models.Post)\
-        .filter(models.Post.title.contains(search))\
+    posts = db\
+        .query(models.Post)\
+        .filter(
+            or_(
+                models.Post.title.contains(search),
+                models.Post.content.contains(search)
+            )
+        )\
         .order_by(models.Post.id)\
         .limit(limit)\
-        .offset(skip)\
+        .offset(skip)
 
     print(posts)
     return posts.all()
