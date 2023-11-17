@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 
 from fastapi import status, HTTPException, Depends, APIRouter
 from sqlalchemy.orm import Session
@@ -18,10 +18,16 @@ router = APIRouter(
 # we are returning a list of posts, whereas the response model tries to fit that
 # into the model for one single post as is defined in PostResponse 🤦‍♂️
 # This is why need to import List[] from typing library
-def get_posts(db: Session = Depends(get_db), current_user: dict = Depends(get_current_user)):
-    posts = db.query(models.Post).all()
+def get_posts(db: Session = Depends(get_db), current_user: dict = Depends(get_current_user),
+              limit: int = 10, skip: int = 0, search: Optional[str] = ''):
+    posts = db.query(models.Post)\
+        .filter(models.Post.title.contains(search))\
+        .order_by(models.Post.id)\
+        .limit(limit)\
+        .offset(skip)\
 
-    return posts
+    print(posts)
+    return posts.all()
 
 
 @router.post('/', status_code=status.HTTP_201_CREATED, response_model=schemas.PostResponse)
@@ -37,7 +43,8 @@ def create_posts(post: schemas.PostCreate, db: Session = Depends(get_db),
 
 
 @router.get('/{post_id}', response_model=schemas.PostResponse)
-def get_post(post_id: int, db: Session = Depends(get_db), current_user: dict = Depends(get_current_user)):
+def get_post(post_id: int, db: Session = Depends(get_db),
+             current_user: dict = Depends(get_current_user)):
     fetched_post = db.query(models.Post).get(
         {"id": post_id})  # get finds via PK
     if not fetched_post:
