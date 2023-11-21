@@ -31,3 +31,25 @@ class User(Base):
     created_at = Column(TIMESTAMP(timezone=True),
                         nullable=False,
                         server_default=text('now()'))
+
+
+class Vote(Base):
+    """
+    Voting system
+
+    Requirements
+    --------------------
+    - Each post will have a vote
+    - Post must have total vote counts
+    - One user cannot like one post more than once
+
+    Args:
+        Base (class): Declarative base
+    """
+
+    __tablename__ = "votes"
+
+    post_id = Column(Integer, ForeignKey(
+        "posts.id", ondelete="CASCADE"), nullable=False, primary_key=True)
+    user_id = Column(Integer, ForeignKey(
+        "users.id", ondelete="CASCADE"), nullable=False, primary_key=True)
