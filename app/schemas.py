@@ -1,7 +1,8 @@
 from datetime import datetime
-from typing import Optional
+from operator import le
+from typing import Optional, Annotated
 
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr, Field, conint
 
 
 # Defining a pydantic model
@@ -73,3 +74,11 @@ class Token(BaseModel):
 class TokenData(BaseModel):
     id: Optional[int] = None
     # created_at: datetime
+
+
+class Vote(BaseModel):
+    post_id: int
+    # vote_dir: int
+    # !conint is discouraged and will be deprecated in Pydantic 3.0
+    # vote_dir: conint(le=1)
+    vote_dir: Annotated[int, Field(le=1)]
