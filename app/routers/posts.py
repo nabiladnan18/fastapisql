@@ -19,7 +19,7 @@ router = APIRouter(
 # we are returning a list of posts, whereas the response model tries to fit that
 # into the model for one single post as is defined in PostResponse 🤦‍♂️
 # This is why need to import List[] from typing library
-def get_posts(db: Session = Depends(get_db), current_user: dict = Depends(get_current_user),
+def get_posts(db: Session = Depends(get_db), current_user: schemas.UserResponse = Depends(get_current_user),
               limit: int = 10, skip: int = 0, search: Optional[str] = ''):
     posts = db\
         .query(models.Post)\
@@ -33,13 +33,12 @@ def get_posts(db: Session = Depends(get_db), current_user: dict = Depends(get_cu
         .limit(limit)\
         .offset(skip)
 
-    print(posts)
     return posts.all()
 
 
 @router.post('/', status_code=status.HTTP_201_CREATED, response_model=schemas.PostResponse)
 def create_posts(post: schemas.PostCreate, db: Session = Depends(get_db),
-                 current_user: int = Depends(get_current_user)):
+                 current_user: schemas.UserResponse = Depends(get_current_user)):
     # ALT: new_post = models.Post(title=post.title, content=post.content, published=post.published)
     new_post = models.Post(**post.model_dump(), owner_id=current_user.id)
     db.add(new_post)
@@ -65,7 +64,7 @@ def get_post(post_id: int, db: Session = Depends(get_db),
 
 @router.delete('/{post_id}', status_code=status.HTTP_204_NO_CONTENT)
 def delete_post(post_id: int, db: Session = Depends(get_db),
-                current_user: dict = Depends(get_current_user)):
+                current_user: schemas.UserResponse = Depends(get_current_user)):
     post_query = db.query(models.Post).filter(
         models.Post.id == post_id)
     post_to_be_deleted = post_query.first()
