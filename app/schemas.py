@@ -66,6 +66,17 @@ class PostResponse(PostBase):
 #     password: str
 
 
+class PostOut(BaseModel):
+    Post: PostResponse
+    # this is capitalised bc the it is the class?
+    total_votes: int
+
+    class Config:
+        # orm_mode is renamed to by from_attributes in V2
+        # orm_mode = True
+        from_attributes = True
+
+
 class Token(BaseModel):
     access_token: str
     token_type: str

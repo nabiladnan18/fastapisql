@@ -1,7 +1,7 @@
 from typing import List, Optional
 
 from fastapi import status, HTTPException, Depends, APIRouter
-from sqlalchemy import or_
+from sqlalchemy import or_, func
 from sqlalchemy.orm import Session
 
 from .. import models, schemas
@@ -14,15 +14,19 @@ router = APIRouter(
 )
 
 
-@router.get('/', response_model=List[schemas.PostResponse])
+@router.get('/', response_model=List[schemas.PostOut])
 # If we add `schemas.PostResponse` as the `repsose_model`, it does not work because
 # we are returning a list of posts, whereas the response model tries to fit that
 # into the model for one single post as is defined in PostResponse 🤦‍♂️
 # This is why need to import List[] from typing library
 def get_posts(db: Session = Depends(get_db), current_user: schemas.UserResponse = Depends(get_current_user),
               limit: int = 10, skip: int = 0, search: Optional[str] = ''):
-    posts = db\
-        .query(models.Post)\
+    results = db\
+        .query(models.Post, func.count(models.Vote.post_id)
+               .label("total_votes"))\
+        .join(models.Vote, models.Vote.post_id == models.Post.id,
+              isouter=True)\
+        .group_by(models.Post.id)\
         .filter(
             or_(
                 models.Post.title.contains(search),
@@ -33,7 +37,7 @@ def get_posts(db: Session = Depends(get_db), current_user: schemas.UserResponse 
         .limit(limit)\
         .offset(skip)
 
-    return posts.all()
+    return results.all()
 
 
 @router.post('/', status_code=status.HTTP_201_CREATED, response_model=schemas.PostResponse)
@@ -48,18 +52,27 @@ def create_posts(post: schemas.PostCreate, db: Session = Depends(get_db),
     return new_post
 
 
-@router.get('/{post_id}', response_model=schemas.PostResponse)
+@router.get('/{post_id}', response_model=schemas.PostOut)
 def get_post(post_id: int, db: Session = Depends(get_db),
              current_user: dict = Depends(get_current_user)):
-    fetched_post = db.query(models.Post).get(
-        {"id": post_id})  # get finds via PK
+    # fetched_post = db.query(models.Post).get(
+    #     {"id": post_id})  # get finds via PK
+    fetched_post = db\
+        .query(models.Post, func.count(models.Vote.post_id)
+               .label("total_votes"))\
+        .filter(
+            models.Post.id == post_id)\
+        .join(models.Vote, models.Vote.post_id == models.Post.id,
+              isouter=True)\
+        .group_by(models.Post.id)
+
     if not fetched_post:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f"Post with post id: {post_id} not found."
         )
 
-    return fetched_post
+    return fetched_post.first()
 
 
 @router.delete('/{post_id}', status_code=status.HTTP_204_NO_CONTENT)
