@@ -3,12 +3,7 @@ import os
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from . import models
-from .database import engine
 from app.routers import auth, posts, users, votes
-
-# db connection
-# models.Base.metadata.create_all(bind=engine)
 
 # FastAPI app
 app = FastAPI()
@@ -30,6 +25,6 @@ app.include_router(auth.router)
 app.include_router(votes.router)
 
 
-@app.get('/')
+@app.get("/")
 async def root():
-    return {'message': f'Hello World! Hello from the {os.environ["DB_HOST"]}!'}
+    return {"message": f'Hello World! Hello from the {os.environ["DB_HOST"]}!'}

@@ -6,16 +6,13 @@ from sqlalchemy.orm import Session
 from app import models, schemas, utils
 from app.database import get_db
 
-router = APIRouter(
-    prefix='/users',
-    tags=['Users']
+router = APIRouter(prefix="/users", tags=["Users"])
+
+
+@router.post(
+    "/", status_code=status.HTTP_201_CREATED, response_model=schemas.UserResponse
 )
-
-
-@router.post('/', status_code=status.HTTP_201_CREATED,
-             response_model=schemas.UserResponse)
 def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
-
     # create a hash for the pw
     hashed_user_pw = utils.hashed(user.password)
     # update the pydantic model
@@ -29,7 +26,7 @@ def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
     return new_user
 
 
-@router.get('/{user_id}', response_model=schemas.UserResponse)
+@router.get("/{user_id}", response_model=schemas.UserResponse)
 def get_user(user_id: int, db: Session = Depends(get_db)):
     # user = db.query(models.User).\
     #     filter(models.User.id == user_id).first()
@@ -37,13 +34,13 @@ def get_user(user_id: int, db: Session = Depends(get_db)):
     if not user:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"User with id: {user_id} not found"
+            detail=f"User with id: {user_id} not found",
         )
 
     return user
 
 
-@router.get('/', response_model=List[schemas.UserResponse])
+@router.get("/", response_model=List[schemas.UserResponse])
 def get_users(db: Session = Depends(get_db)):
     user = db.query(models.User).all()
 
