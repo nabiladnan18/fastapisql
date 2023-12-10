@@ -1,5 +1,4 @@
 from datetime import datetime
-from operator import le
 from typing import Optional, Annotated
 
 from pydantic import BaseModel, EmailStr, Field, conint
@@ -55,10 +54,12 @@ class PostResponse(PostBase):
     `dict` type. By adding this we tell the the Pydantic model to read the
     data even if it is not a valid dict. This is needed for the response.
     """
+
     class Config:
         # orm_mode is renamed to by from_attributes in V2
         # orm_mode = True
         from_attributes = True
+
 
 # No longer needed as OAuth2RequestForm is being used
 # class UserLogin(BaseModel):
