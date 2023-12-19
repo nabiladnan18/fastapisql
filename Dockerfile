@@ -9,4 +9,4 @@ RUN pipenv install --system --deploy --ignore-pipfile
 
 COPY . .
 
-CMD ["/bin/sh", "-c", "pipenv run alembic upgrade head && pipenv run uvicorn app.main:app --host 0.0.0.0"]
+CMD ["/bin/sh", "-c", "alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port 8000"]
