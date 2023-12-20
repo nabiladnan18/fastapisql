@@ -27,4 +27,6 @@ app.include_router(votes.router)
 
 @app.get("/")
 async def root():
-    return {"message": f'Hello World! Hello from the {os.environ["DB_HOST"]}!'}
+    return {
+        "message": f'Hello World! Hello from the {os.environ["DB_HOST"]} docker yo yo!'
+    }

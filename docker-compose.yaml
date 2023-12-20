@@ -1,20 +1,26 @@
 version: "3"
 services:
   app:
-    build: .
-    image: fastapisql:v0.1
-    env_file:
-      - .env
+    image: nadnan18/fastapisql:latest
+    environment:
+      - DATABASE_USER=${DATABASE_USER}
+      - DATABASE_PASSWORD=${DATABASE_PASSWORD}
+      - DATABASE_HOST=${DATABASE_HOST}
+      - DATABASE=${DATABASE}
+      - DATABASE_PORT=${DATABASE_PORT}
+      - SECRET_KEY=${SECRET_KEY}
+      - ALGORITHM=${ALGORITHM}
+      - ACCESS_TOKEN_EXPIRATION_MINUTES=${ACCESS_TOKEN_EXPIRATION_MINUTES}
     ports:
-      - 8000:8000
+      - 80:8000
     depends_on:
       postgres:
         condition: service_healthy
   postgres:
     image: postgres
     environment:
-      - POSTGRES_PASSWORD=letmein
-      - POSTGRES_DB=fastapisql
+      - DATABASE_PASSWORD=${DATABASE_PASSWORD}
+      - DATABASE=${DATABASE}
     ports:
       - 5432:5432
     volumes:
