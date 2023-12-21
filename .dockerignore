@@ -9,3 +9,4 @@ docker-compose*
 Dockerfile
 sqlCommands
 README*
+tests/
