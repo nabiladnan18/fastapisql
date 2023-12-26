@@ -1,5 +1,3 @@
-import os
-
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -27,6 +25,4 @@ app.include_router(votes.router)
 
 @app.get("/")
 async def root():
-    return {
-        "message": f'Hello World! Hello from the {os.environ["DB_HOST"]} docker yo yo!'
-    }
+    return {"message": "Hello World! Hello from the docker yo yo!"}
