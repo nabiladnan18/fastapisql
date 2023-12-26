@@ -23,7 +23,7 @@ jobs:
 
       - name: Installing dependencies
         run: python3 -m pip install --upgrade pip && \
-          sudo -H pip install -U pipenv && \
+          python3 -m install -U pipenv && \
           python3 -m pipenv install
 
       - name: running tests
