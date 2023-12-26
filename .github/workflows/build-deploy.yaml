@@ -3,7 +3,7 @@ run-name: ${{ github.actor }} is learning Github Actions
 on:
   pull_request:
     branches:
-      - main
+      - "*"
   push:
     branches:
       - main
@@ -13,12 +13,18 @@ jobs:
   job1:
     runs-on: ubuntu-22.04
     steps:
-      - name: checkout main
+      - name: Checkout main repository
         uses: actions/checkout@v4
 
-      - name: install dependencies
-        run: sudo -H pip install -U pipenv && \
-          python3 -m pipenv install --system --deploy --ignore-pipfile
+      - name: Setting up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+
+      - name: Installing dependencies
+        run: python3 -m pip install --upgrade pip && \
+          sudo -H pip install -U pipenv && \
+          python3 -m pipenv install
 
       - name: running tests
-        run: pytest
+        run: python3 -m pipenv run pytest
