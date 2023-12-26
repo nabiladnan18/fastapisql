@@ -1,6 +1,7 @@
 """
 Fixtures in the conftest.py will be available to everything that is in the tests package. This is one of the reasons why different test modules do not need to import client and session individually.
 """
+import os
 
 import pytest
 from fastapi.testclient import TestClient
@@ -12,7 +13,7 @@ from app.main import app
 from app import models
 from app.oauth2 import create_access_token
 
-DB_CONNECTION_STRING = "postgresql://postgres:letmein@localhost:5433/fastapisql_test"
+DB_CONNECTION_STRING = f"postgresql://postgres:letmein@localhost:{os.environ['TEST_DATABASE_PORT']}/{os.environ['TEST_DATABASE']}"
 
 engine = create_engine(DB_CONNECTION_STRING)
 TestSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
