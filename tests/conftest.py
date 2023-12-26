@@ -10,7 +10,7 @@ from app.database import get_db
 
 from app.main import app
 from app import models
-
+from app.oauth2 import create_access_token
 
 DB_CONNECTION_STRING = "postgresql://postgres:letmein@localhost:5433/fastapisql_test"
 
