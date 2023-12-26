@@ -3,7 +3,7 @@ run-name: ${{ github.actor }} is learning Github Actions
 on:
   pull_request:
     branches:
-      - "*"
+      - main
   push:
     branches:
       - main
@@ -23,7 +23,7 @@ jobs:
 
       - name: Installing dependencies
         run: python3 -m pip install --upgrade pip && \
-          python3 -m install -U pipenv && \
+          python3 -m pip install -U pipenv && \
           python3 -m pipenv install
 
       - name: running tests
