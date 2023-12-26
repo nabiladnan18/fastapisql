@@ -69,7 +69,7 @@ class PostResponse(PostBase):
 
 class PostOut(BaseModel):
     Post: PostResponse
-    # this is capitalised bc the it is the class?
+    # ? this is capitalised bc the it is the class?
     total_votes: int
 
     class Config:

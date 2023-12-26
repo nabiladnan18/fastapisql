@@ -12,7 +12,7 @@ router = APIRouter(prefix="/posts", tags=["Posts"])
 
 
 @router.get("/", response_model=List[schemas.PostOut])
-# If we add `schemas.PostResponse` as the `repsose_model`, it does not work because
+# If we add `schemas.PostResponse` as the `response_model`, it does not work because
 # we are returning a list of posts, whereas the response model tries to fit that
 # into the model for one single post as is defined in PostResponse 🤦‍♂️
 # This is why need to import List[] from typing library
@@ -70,7 +70,7 @@ def get_post(
         .filter(models.Post.id == post_id)
         .join(models.Vote, models.Vote.post_id == models.Post.id, isouter=True)
         .group_by(models.Post.id)
-    )
+    ).first()
 
     if not fetched_post:
         raise HTTPException(
@@ -78,7 +78,7 @@ def get_post(
             detail=f"Post with post id: {post_id} not found.",
         )
 
-    return fetched_post.first()
+    return fetched_post
 
 
 @router.delete("/{post_id}", status_code=status.HTTP_204_NO_CONTENT)
