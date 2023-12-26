@@ -14,14 +14,14 @@ jobs:
     environment:
       name: test_env_variables
     env:
-      ALGORITHM: ${{ALGORITHM}}
-      ACCESS_TOKEN_EXPIRATION_MINUTES: ${{ACCESS_TOKEN_EXPIRATION_MINUTES}}
-      SECRET_KEY: ${{SECRET_KEY}}
-      DATABASE_USER: ${{DATABASE_USER}}
-      DATABASE: ${{DATABASE}}
-      DATABASE_HOST: ${{DATABASE_HOST}}
-      DATABASE_PORT: ${{DATABASE_PORT}}
-      DATABASE_PASSWORD: ${{DATABASE_PASSWORD}}
+      ALGORITHM: ${{secrets.ALGORITHM}}
+      ACCESS_TOKEN_EXPIRATION_MINUTES: ${{secrets.ACCESS_TOKEN_EXPIRATION_MINUTES}}
+      SECRET_KEY: ${{secrets.SECRET_KEY}}
+      DATABASE_USER: ${{secrets.DATABASE_USER}}
+      DATABASE: ${{secrets.DATABASE}}
+      DATABASE_HOST: ${{secrets.DATABASE_HOST}}
+      DATABASE_PORT: ${{secrets.DATABASE_PORT}}
+      DATABASE_PASSWORD: ${{secrets.DATABASE_PASSWORD}}
     runs-on: ubuntu-22.04
     steps:
       - name: Checkout main repository
