@@ -1,24 +1,56 @@
 name: Build and Deploy
 run-name: ${{ github.actor }} is learning Github Actions
 on:
+  pull_request:
+    branches:
+      - main
   push:
     branches:
       - main
     # tags:
     #   - v*
-  pull_request:
-    branches:
-      - main
 jobs:
   job1:
+    environment:
+      name: test_env_variables
+    env:
+      ALGORITHM: ${{secrets.ALGORITHM}}
+      ACCESS_TOKEN_EXPIRATION_MINUTES: ${{secrets.ACCESS_TOKEN_EXPIRATION_MINUTES}}
+      SECRET_KEY: ${{secrets.SECRET_KEY}}
+      DATABASE_USER: ${{secrets.DATABASE_USER}}
+      DATABASE: ${{secrets.DATABASE}}
+      DATABASE_HOST: ${{secrets.DATABASE_HOST}}
+      DATABASE_PORT: ${{secrets.DATABASE_PORT}}
+      DATABASE_PASSWORD: ${{secrets.DATABASE_PASSWORD}}
+      TEST_DATABASE_PORT: ${{secrets.TEST_DATABASE_PORT}}
+      TEST_DATABASE: ${{secrets.TEST_DATABASE}}
+
+    services:
+      postgres:
+        image: postgres:latest
+        env:
+          POSTGRES_PASSWORD: ${{secrets.DATABASE_PASSWORD}}
+          POSTGRES_DB: ${{secrets.TEST_DATABASE}}
+        ports:
+          - 5433:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
     runs-on: ubuntu-22.04
     steps:
-      - name: checkout main
+      - name: Checkout main repository
         uses: actions/checkout@v4
 
-      - name: install dependencies
-        run: python3 -m pip install pipenv && \
-          pipenv install --system --deploy --ignore-pipfile
+      - name: Setting up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+
+      - name: Installing dependencies
+        run: pip install --upgrade pip && pip install pipenv && pipenv install --system --deploy --ignore-pipfile --dev
 
       - name: running tests
-        run: pytest
+        run: pipenv run pytest -v
