@@ -26,8 +26,9 @@ jobs:
     services:
       postgres:
         image: postgres:latest
-        env: POSTGRES_PASSWORD = ${{secrets.DATABASE_PASSWORD}}
-          POSTGRES_DATABASE = ${{secrets.DATABASE}}
+        env:
+          POSTGRES_PASSWORD: ${{secrets.DATABASE_PASSWORD}}
+          POSTGRES_DATABASE: ${{secrets.DATABASE}}
         ports:
           - 5432:5432
         options: >-
