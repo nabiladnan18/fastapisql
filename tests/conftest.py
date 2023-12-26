@@ -18,7 +18,7 @@ engine = create_engine(DB_CONNECTION_STRING)
 TestSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 
-@pytest.fixture()
+@pytest.fixture
 # by default the scope is function
 # this means that the fixture is run every time for a new function
 # options are function, module, class, package, session
@@ -32,7 +32,7 @@ def session():
         db.close()
 
 
-@pytest.fixture()
+@pytest.fixture
 def client(session):
     def override_get_db():
         try:
@@ -91,6 +91,16 @@ def test_user(client):  # noqa
 
 
 @pytest.fixture
+def test_user2(client):  # noqa
+    user_data = {"email": "servus@gmail.com", "password": "password123"}
+    response = client.post("/users/", json=user_data)
+    assert response.status_code == 201
+    new_user = response.json()
+    new_user["password"] = user_data["password"]
+    return new_user
+
+
+@pytest.fixture
 def token(test_user):
     return create_access_token({"user_id": test_user["id"]})
 
@@ -102,7 +112,7 @@ def authorised_client(client, token):
 
 
 @pytest.fixture
-def create_test_posts(test_user, session):
+def create_test_posts(test_user, test_user2, session):
     post_data = [
         {"title": "Athens", "content": "Amazing ruins", "owner_id": test_user["id"]},
         {
@@ -111,6 +121,7 @@ def create_test_posts(test_user, session):
             "owner_id": test_user["id"],
         },
         {"title": "Gilli", "content": "Party!", "owner_id": test_user["id"]},
+        {"title": "Bali", "content": "Party!", "owner_id": test_user2["id"]},
     ]
 
     posts_list = list(map(lambda post: models.Post(**post), post_data))
