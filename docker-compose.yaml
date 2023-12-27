@@ -1,7 +1,7 @@
 version: "3"
 services:
   app:
-    image: nadnan18/fastapisql:latest
+    image: nadnan18/fastapisql:v0.1
     environment:
       - DATABASE_USER=${DATABASE_USER}
       - DATABASE_PASSWORD=${DATABASE_PASSWORD}
@@ -19,8 +19,8 @@ services:
   postgres:
     image: postgres
     environment:
-      - DATABASE_PASSWORD=${DATABASE_PASSWORD}
-      - DATABASE=${DATABASE}
+      - POSTGRES_PASSWORD=${DATABASE_PASSWORD}
+      - POSTGRES_DB=${DATABASE}
     ports:
       - 5432:5432
     healthcheck:
