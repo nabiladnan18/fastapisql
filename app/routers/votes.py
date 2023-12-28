@@ -34,7 +34,7 @@ def vote(vote: schemas.Vote, current_user: CurrentUser, db: GetDatabase):
         new_vote = models.Vote(post_id=vote.post_id, user_id=current_user.id)
         db.add(new_vote)
         db.commit()
-        return {"message": "Voted successfully"}
+        return {"message": "Voted successfully!"}
 
     if not fetched_vote:
         raise HTTPException(

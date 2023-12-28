@@ -1,7 +1,6 @@
 import pytest
 
 from app import models
-from tests.conftest import authorised_client
 
 
 @pytest.fixture
