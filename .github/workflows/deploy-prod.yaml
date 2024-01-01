@@ -48,8 +48,6 @@ jobs:
             DATABASE_HOST: ${{secrets.DATABASE_HOST}}
             DATABASE_PORT: ${{secrets.DATABASE_PORT}}
             DATABASE_PASSWORD: ${{secrets.DATABASE_PASSWORD}}
-          cache-from: type=registry,ref=user/fastapisql:v0.1
-          cache-to: type=inline
 
       - name: Pulling Image
         run: docker pull ${{ secrets.DOCKERHUB_USERNAME }}/fastapisql:v0.1
