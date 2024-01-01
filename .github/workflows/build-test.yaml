@@ -1,4 +1,4 @@
-name: Build and Deploy
+name: Build and Test
 run-name: ${{ github.actor }} is learning Github Actions
 on:
   pull_request:
