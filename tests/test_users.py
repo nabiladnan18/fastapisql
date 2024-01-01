@@ -8,7 +8,10 @@ from app import schemas
 def test_root(client):  # noqa: F811
     response = client.get("/")
     # print(response.json().get("message"))
-    assert response.json().get("message") == "Hello World! Hello from the docker yo yo!"
+    assert (
+        response.json().get("message")
+        == "Go to /docs. Create a user to authenticate and play around!"
+    )
     assert response.status_code == 200
 
 
