@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+  create:
     tags:
       - v*
 jobs:
@@ -37,14 +38,25 @@ jobs:
           context: .
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/fastapisql:v0.1
+          environment: prod_secrets
+          secrets: |
+            ALGORITHM: ${{secrets.ALGORITHM}}
+            ACCESS_TOKEN_EXPIRATION_MINUTES: ${{secrets.ACCESS_TOKEN_EXPIRATION_MINUTES}}
+            SECRET_KEY: ${{secrets.SECRET_KEY}}
+            DATABASE_USER: ${{secrets.DATABASE_USER}}
+            DATABASE: ${{secrets.DATABASE}}
+            DATABASE_HOST: ${{secrets.DATABASE_HOST}}
+            DATABASE_PORT: ${{secrets.DATABASE_PORT}}
+            DATABASE_PASSWORD: ${{secrets.DATABASE_PASSWORD}}
           cache-from: type=registry,ref=user/fastapisql:v0.1
           cache-to: type=inline
 
       - name: Pulling Image
-        run: docker pull nadnan18/fastapisql:v0.1
+        run: docker pull ${{ secrets.DOCKERHUB_USERNAME }}/fastapisql:v0.1
 
       - name: Delete Old Image
         run: docker rm -f fastapisql || true
 
-      - name: Run New Docker Image
-        run: docker run -d --name fastapisql nadnan18/fastapisql:v0.1
+      # - name: Run Docker Container
+      #   run: |
+      #     docker run $(for secret in ALGORITHM ACCESS_TOKEN_EXPIRATION_MINUTES SECRET_KEY DATABASE_USER DATABASE DATABASE_HOST DATABASE_PORT DATABASE_PASSWORD; do echo -n "-e $secret=${{ secrets.prod_secrets.$secret }} "; done) ${{ secrets.DOCKERHUB_USERNAME }}/fastapisql:v0.1

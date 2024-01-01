@@ -65,5 +65,5 @@ jobs:
           context: .
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/fastapisql:latest
-          cache-from: type=registry,ref=user/fastapisql:latest
-          cache-to: type=inline
+          run: |
+            docker run $(for secret in ALGORITHM ACCESS_TOKEN_EXPIRATION_MINUTES SECRET_KEY DATABASE_USER DATABASE DATABASE_HOST DATABASE_PORT DATABASE_PASSWORD; do echo -n "-e $secret=${{ secrets.prod_secrets.$secret }} "; done) ${{ secrets.DOCKERHUB_USERNAME }}/fastapisql:latest
