@@ -25,4 +25,4 @@ app.include_router(votes.router)
 
 @app.get("/")
 async def root():
-    return {"message": "Hello World! Hello from the docker yo yo!"}
+    return {"message": "Go to /docs. Create a user to authenticate and play around!"}

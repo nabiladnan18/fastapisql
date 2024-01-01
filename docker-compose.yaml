@@ -11,20 +11,7 @@ services:
       - SECRET_KEY=${SECRET_KEY}
       - ALGORITHM=${ALGORITHM}
       - ACCESS_TOKEN_EXPIRATION_MINUTES=${ACCESS_TOKEN_EXPIRATION_MINUTES}
-    ports:
-      - 80:8000
-    depends_on:
-      postgres:
-        condition: service_healthy
-  postgres:
-    image: postgres
-    environment:
       - POSTGRES_PASSWORD=${DATABASE_PASSWORD}
       - POSTGRES_DB=${DATABASE}
     ports:
-      - 5432:5432
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
-      interval: 2s
-      timeout: 5s
-      retries: 5
+      - 8000:8000

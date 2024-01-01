@@ -1,16 +1,11 @@
-name: Build and Deploy
+name: Build and Test
 run-name: ${{ github.actor }} is learning Github Actions
 on:
   pull_request:
     branches:
       - main
-  # push:
-  #   branches:
-  #     - main
-  #   # tags:
-  #   #   - v*
 jobs:
-  job1:
+  test:
     environment:
       name: test_env_variables
     env:
@@ -69,6 +64,6 @@ jobs:
         with:
           context: .
           push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/fastapisql:v0.1
-          cache-from: type=registry,ref=user/fastapisql:v0.1
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/fastapisql:latest
+          cache-from: type=registry,ref=user/fastapisql:latest
           cache-to: type=inline
