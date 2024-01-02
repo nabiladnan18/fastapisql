@@ -65,3 +65,62 @@ jobs:
           context: .
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/fastapisql:latest
+  test-deployment:
+    environment:
+      name: prod_secrets
+    runs-on: self-hosted
+    steps:
+      - name: Check and Initialise Docker Swarm
+        run: |
+          if docker info | grep -q "Swarm: active"; then
+            echo "Docker Swarm is already active."
+            else
+            echo "Initialising Docker Swarm..."
+            docker swarm init
+          fi
+
+      - name: Manage Docker Secrets
+        run: |
+          # Define the secrets
+          SECRETS=("ALGORITHM" "ACCESS_TOKEN_EXPIRATION_MINUTES" "SECRET_KEY" "DATABASE_USER" "DATABASE" "DATABASE_HOST" "DATABASE_PORT" "DATABASE_PASSWORD")
+
+          # Check and remove existing secrets
+          for secret in "${SECRETS[@]}"; do
+          if docker secret ls | grep -q "$secret"; then
+              echo "Removing existing secret: $secret"
+              docker secret rm $secret
+          fi
+          done
+          
+      - name: Create Docker Secrets
+        run: |
+          SECRETS=("ALGORITHM" "ACCESS_TOKEN_EXPIRATION_MINUTES" "SECRET_KEY" "DATABASE_USER" "DATABASE" "DATABASE_HOST" "DATABASE_PORT" "DATABASE_PASSWORD")
+          for SECRET in "${SECRETS[@]}"; do
+            echo "${{ secrets.${SECRET} }}" | docker secret create ${SECRET} -
+          done
+      
+      - name: Deploy to Docker Swarm
+        run: |
+
+          docker service create --name fast-app \
+            --secret ALGORITHM \
+            --secret ACCESS_TOKEN_EXPIRATION_MINUTES \
+            --secret SECRET_KEY \
+            --secret DATABASE_USER \
+            --secret DATABASE \
+            --secret DATABASE_HOST \
+            --secret DATABASE_PORT \
+            --secret DATABASE_PASSWORD \
+            --env ALGORITHM_FILE=/run/secrets/ALGORITHM \
+            --env ACCESS_TOKEN_EXPIRATION_MINUTES_FILE=/run/secrets/ACCESS_TOKEN_EXPIRATION_MINUTES \
+            --env SECRET_KEY_FILE=/run/secrets/SECRET_KEY \
+            --env DATABASE_USER_FILE=/run/secrets/DATABASE_USER \
+            --env DATABASE_FILE=/run/secrets/DATABASE \
+            --env DATABASE_HOST_FILE=/run/secrets/DATABASE_HOST \
+            --env DATABASE_PORT_FILE=/run/secrets/DATABASE_PORT \
+            --env DATABASE_PASSWORD_FILE=/run/secrets/DATABASE_PASSWORD \
+            --publish published=8080,target=80 \
+            ${{ secrets.DOCKERHUB_USERNAME }}/fastapisql:latest
+
+          sleep 10
+          docker ps fast-app
