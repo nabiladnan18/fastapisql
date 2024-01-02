@@ -60,6 +60,10 @@ jobs:
           for secret in "${SECRETS[@]}"; do
             echo "Creating secret: $secret"
             echo "${{ secrets[$secret] }}" | docker secret create $secret -
+          # Create new secrets
+          for secret in "${SECRETS[@]}"; do
+            echo "Creating secret: $secret"
+            docker secret create $secret - <<< "${{secrets[$secret]}}"
           done
 
       - name: Deploy to Docker Swarm
