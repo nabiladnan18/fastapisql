@@ -59,7 +59,7 @@ jobs:
           # Create new secrets using values from GitHub Actions Secrets
           for secret in "${SECRETS[@]}"; do
             echo "Creating secret: $secret"
-            echo "${{ secrets[$secret] }}" | docker secret create $secret -
+            echo "${{ secrets.$secret }}" | docker secret create $secret -
           done
 
       - name: Deploy to Docker Swarm
