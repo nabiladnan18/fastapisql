@@ -90,14 +90,7 @@ jobs:
               echo "Removing existing secret: $secret"
               docker secret rm $secret
           fi
-          done
-          
-      - name: Create Docker Secrets
-        run: |
-          SECRETS=("ALGORITHM" "ACCESS_TOKEN_EXPIRATION_MINUTES" "SECRET_KEY" "DATABASE_USER" "DATABASE" "DATABASE_HOST" "DATABASE_PORT" "DATABASE_PASSWORD")
-          for secret in "${SECRETS[@]}"; do
-            echo "${{ secrets.secret }}" | docker secret create $secret -
-          done
+          done    
       
       - name: Deploy to Docker Swarm
         run: |
