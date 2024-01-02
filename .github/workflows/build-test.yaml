@@ -65,7 +65,3 @@ jobs:
           context: .
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/fastapisql:latest
-
-      - name: Run Docker Container
-        run: |
-          docker run --name fast-test $(for secret in ALGORITHM ACCESS_TOKEN_EXPIRATION_MINUTES SECRET_KEY DATABASE_USER DATABASE DATABASE_HOST DATABASE_PORT DATABASE_PASSWORD; do echo -n "-e $$secret=${{ secrets.test_env_variables.$$secret }} "; done) ${{ secrets.DOCKERHUB_USERNAME }}/fastapisql:latest
