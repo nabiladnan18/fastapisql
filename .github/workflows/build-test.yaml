@@ -92,13 +92,13 @@ jobs:
           fi
           done
           
-          docker secret create ALGORITHM=${{secrets.ALGORITHM}}
-          docker secret create ACCESS_TOKEN_EXPIRATION_MINUTES=${{secrets.ACCESS_TOKEN_EXPIRATION_MINUTES}}
-          docker secret create SECRET_KEY=${{secrets.SECRET_KEY}}
-          docker secret create DATABASE_USER=${{secrets.DATABASE_USER}}
-          docker secret create DATABASE_HOST=${{secrets.DATABASE_HOST}}
-          docker secret create DATABASE_PORT=${{secrets.DATABASE_PORT}}
-          docker secret create DATABASE_PASSWORD=${{secrets.DATABASE_PASSWORD}}
+          docker secret create ALGORITHM="${{secrets.ALGORITHM}}"
+          docker secret create ACCESS_TOKEN_EXPIRATION_MINUTES="${{secrets.ACCESS_TOKEN_EXPIRATION_MINUTES}}"
+          docker secret create SECRET_KEY="${{secrets.SECRET_KEY}}"
+          docker secret create DATABASE_USER="${{secrets.DATABASE_USER}}"
+          docker secret create DATABASE_HOST="${{secrets.DATABASE_HOST}}"
+          docker secret create DATABASE_PORT="${{secrets.DATABASE_PORT}}"
+          docker secret create DATABASE_PASSWORD="${{secrets.DATABASE_PASSWORD}}"
            
       
       - name: Deploy to Docker Swarm
