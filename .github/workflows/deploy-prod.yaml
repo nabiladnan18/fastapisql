@@ -54,7 +54,7 @@ jobs:
           done
 
           for secret in "${SECRETS[@]}"; do
-            secret_value="${{ secrets[secret] }}"
+            secret_value="${{ secrets.secret }}"
             docker secret create $secret = <<< "$secret_value"
           done
 
@@ -91,3 +91,4 @@ jobs:
 
           sleep 10
           docker ps fast-app
+
