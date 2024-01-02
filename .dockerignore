@@ -10,3 +10,6 @@ Dockerfile
 sqlCommands
 README*
 tests/
+/run/
+run/
+/run

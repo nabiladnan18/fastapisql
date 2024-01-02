@@ -65,5 +65,3 @@ jobs:
           context: .
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/fastapisql:latest
-          cache-from: type=registry,ref=user/fastapisql:latest
-          cache-to: type=inline
