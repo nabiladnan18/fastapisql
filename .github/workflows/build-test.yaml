@@ -95,8 +95,8 @@ jobs:
       - name: Create Docker Secrets
         run: |
           SECRETS=("ALGORITHM" "ACCESS_TOKEN_EXPIRATION_MINUTES" "SECRET_KEY" "DATABASE_USER" "DATABASE" "DATABASE_HOST" "DATABASE_PORT" "DATABASE_PASSWORD")
-          for SECRET in "${SECRETS[@]}"; do
-            echo "${{ secrets.secret }}" | docker secret create secret -
+          for secret in "${SECRETS[@]}"; do
+            echo "${{ secrets.secret }}" | docker secret create $secret -
           done
       
       - name: Deploy to Docker Swarm
