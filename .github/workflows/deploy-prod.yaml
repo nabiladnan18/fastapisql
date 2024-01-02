@@ -53,21 +53,21 @@ jobs:
             fi
           done
 
-          for secret in "${SECRETS[@]}"; do
-            secret_value="${{ secrets.secret }}"
-            docker secret create $secret = <<< "$secret_value"
-          done
+        #   for secret in "${SECRETS[@]}"; do
+        #     secret_value="${{ secrets[secret] }}"
+        #     docker secret create $secret = <<< "$secret_value"
+        #   done
           
       - name: Deploy to Docker Swarm
         run: |
-          # docker secret create ALGORITHM - <<< "${{secrets.ALGORITHM}}"
-          # docker secret create ACCESS_TOKEN_EXPIRATION_MINUTES - <<< "${{secrets.ACCESS_TOKEN_EXPIRATION_MINUTES}}"
-          # docker secret create SECRET_KEY - <<< "${{secrets.SECRET_KEY}}"
-          # docker secret create DATABASE_USER - <<< "${{secrets.DATABASE_USER}}"
-          # docker secret create DATABASE - <<< "${{secrets.DATABASE}}"
-          # docker secret create DATABASE_HOST - <<< "${{secrets.DATABASE_HOST}}"
-          # docker secret create DATABASE_PORT - <<< "${{secrets.DATABASE_PORT}}"
-          # docker secret create DATABASE_PASSWORD - <<< "${{secrets.DATABASE_PASSWORD}}"
+          docker secret create ALGORITHM - <<< "${{secrets.ALGORITHM}}"
+          docker secret create ACCESS_TOKEN_EXPIRATION_MINUTES - <<< "${{secrets.ACCESS_TOKEN_EXPIRATION_MINUTES}}"
+          docker secret create SECRET_KEY - <<< "${{secrets.SECRET_KEY}}"
+          docker secret create DATABASE_USER - <<< "${{secrets.DATABASE_USER}}"
+          docker secret create DATABASE - <<< "${{secrets.DATABASE}}"
+          docker secret create DATABASE_HOST - <<< "${{secrets.DATABASE_HOST}}"
+          docker secret create DATABASE_PORT - <<< "${{secrets.DATABASE_PORT}}"
+          docker secret create DATABASE_PASSWORD - <<< "${{secrets.DATABASE_PASSWORD}}"
 
           docker service create --name fast-app \
             --secret ALGORITHM \
