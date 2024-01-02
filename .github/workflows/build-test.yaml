@@ -90,20 +90,29 @@ jobs:
               echo "Removing existing secret: $secret"
               docker secret rm $secret
           fi
-          done    
+          done
+          
+          docker secret create ALGORITHM=${{secrets.ALGORITHM}}
+          docker secret create ACCESS_TOKEN_EXPIRATION_MINUTES=${{secrets.ACCESS_TOKEN_EXPIRATION_MINUTES}}
+          docker secret create SECRET_KEY=${{secrets.SECRET_KEY}}
+          docker secret create DATABASE_USER=${{secrets.DATABASE_USER}}
+          docker secret create DATABASE_HOST=${{secrets.DATABASE_HOST}}
+          docker secret create DATABASE_PORT=${{secrets.DATABASE_PORT}}
+          docker secret create DATABASE_PASSWORD=${{secrets.DATABASE_PASSWORD}}
+           
       
       - name: Deploy to Docker Swarm
         run: |
 
           docker service create --name fast-app \
-            --secret ALGORITHM=${{secrets.ALGORITHM}} \
-            --secret ACCESS_TOKEN_EXPIRATION_MINUTES=${{secrets.ACCESS_TOKEN_EXPIRATION_MINUTES}} \
-            --secret SECRET_KEY=${{secrets.SECRET_KEY}} \
-            --secret DATABASE_USER=${{secrets.DATABASE_USER}} \
-            --secret DATABASE=${{secrets.DATABASE}} \
-            --secret DATABASE_HOST=${{secrets.DATABASE_HOST}} \
-            --secret DATABASE_PORT=${{secrets.DATABASE_PORT}} \
-            --secret DATABASE_PASSWORD=${{secrets.DATABASE_PASSWORD}} \
+            --secret ALGORITHM \
+            --secret ACCESS_TOKEN_EXPIRATION_MINUTES \
+            --secret SECRET_KEY \
+            --secret DATABASE_USER \
+            --secret DATABASE \
+            --secret DATABASE_HOST \
+            --secret DATABASE_PORT \
+            --secret DATABASE_PASSWORD \
             --env ALGORITHM_FILE=/run/secrets/ALGORITHM \
             --env ACCESS_TOKEN_EXPIRATION_MINUTES_FILE=/run/secrets/ACCESS_TOKEN_EXPIRATION_MINUTES \
             --env SECRET_KEY_FILE=/run/secrets/SECRET_KEY \
