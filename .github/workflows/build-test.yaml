@@ -67,7 +67,7 @@ jobs:
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/fastapisql:latest
   test-deployment:
     environment:
-      name: prod_secrets
+      name: test_env_variables
     runs-on: self-hosted
     steps:
       - name: Check and Initialise Docker Swarm
