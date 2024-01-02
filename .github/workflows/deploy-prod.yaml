@@ -1,16 +1,16 @@
 name: Pull and Deploy
 run-name: ${{ github.actor }} is learning Github Actions
 on:
-  push:
-    branches:
-      - main
   create:
     tags:
       - v*
+    branches:
+      - main
 jobs:
   deploy:
+    environment:
+      name: prod_secrets
     runs-on: self-hosted
-
     steps:
       - name: Checkout main repository
         uses: actions/checkout@v4
