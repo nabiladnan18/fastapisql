@@ -49,14 +49,14 @@ jobs:
           docker secret create DATABASE_PASSWORD - <<< "${{secrets.DATABASE_PASSWORD}}"
 
           docker service create --name fast-app \
-            --secret create ALGORITHM \
-            --secret create ACCESS_TOKEN_EXPIRATION_MINUTES \
-            --secret create SECRET_KEY \
-            --secret create DATABASE_USER \
-            --secret create DATABASE \
-            --secret create DATABASE_HOST \
-            --secret create DATABASE_PORT \
-            --secret create DATABASE_PASSWORD \
+            --secret ALGORITHM \
+            --secret ACCESS_TOKEN_EXPIRATION_MINUTES \
+            --secret SECRET_KEY \
+            --secret DATABASE_USER \
+            --secret DATABASE \
+            --secret DATABASE_HOST \
+            --secret DATABASE_PORT \
+            --secret DATABASE_PASSWORD \
             --env ALGORITHM_FILE=/run/secrets/ALGORITHM \
             --env ACCESS_TOKEN_EXPIRATION_MINUTES_FILE=/run/secrets/ACCESS_TOKEN_EXPIRATION_MINUTES \
             --env SECRET_KEY_FILE=/run/secrets/SECRET_KEY \
