@@ -31,17 +31,32 @@ jobs:
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/fastapisql:v0.1
 
-      - name: Check and Initialize Docker Swarm
+      - name: Check and Initialise Docker Swarm
         run: |
           if docker info | grep -q "Swarm: active"; then
             echo "Docker Swarm is already active."
           else
-            echo "Initializing Docker Swarm..."
+            echo "Initialising Docker Swarm..."
             docker swarm init
           fi
 
-      - name: Stop and remove existing containers
-        run: docker service rm fast-app || true
+      - name: Manage Docker Secrets
+        run: |
+          # Define the secrets
+          SECRETS=("ALGORITHM" "ACCESS_TOKEN_EXPIRATION_MINUTES" "SECRET_KEY" "DATABASE_USER" "DATABASE" "DATABASE_HOST" "DATABASE_PORT" "DATABASE_PASSWORD")
+
+          # Check and remove existing secrets
+          for secret in "${SECRETS[@]}"; do
+            if docker secret ls | grep -q "$secret"; then
+              echo "Removing existing secret: $secret"
+              docker secret rm $secret
+            fi
+          done
+
+          for secret in "${SECRETS[@]}"; do
+            secret_value="${{ secrets[secret] }}"
+            docker secret create $secret = <<< "$secret_value"
+          done
 
       - name: Manage docker secrets
         run: |
@@ -95,6 +110,3 @@ jobs:
 
           sleep 10
           docker ps fast-app
-
-      - name: Cleanup Docker Swarm
-        run: docker swarm leave --force
