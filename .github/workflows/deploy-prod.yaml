@@ -54,7 +54,8 @@ jobs:
           done
 
           for secret in "${SECRETS[@]}"; do
-            docker secret create ${{ secrets.secret }}
+            secret_value="${{ secrets[secret] }}"
+            docker secret create $secret = <<< "$secret_value"
           done
 
       - name: Deploy to Docker Swarm
@@ -90,6 +91,3 @@ jobs:
 
           sleep 10
           docker ps fast-app
-
-      - name: Cleanup Docker Swarm
-        run: docker swarm leave --force
