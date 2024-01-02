@@ -23,7 +23,7 @@ jobs:
         with:
           context: .
           push: true
-          tags: ${{ secrets.prod_secrets.DOCKERHUB_USERNAME }}/fastapisql:v0.1
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/fastapisql:v0.1
 
       - name: Set up Docker Swarm
         run: docker swarm init
@@ -33,14 +33,14 @@ jobs:
 
       - name: Deploy to Docker Swarm
         run: |
-          docker secret create ALGORITHM - <<< "${{secrets.prod_secrets.ALGORITHM}}"
-          docker secret create ACCESS_TOKEN_EXPIRATION_MINUTES - <<< "${{secrets.prod_secrets.ACCESS_TOKEN_EXPIRATION_MINUTES}}"
-          docker secret create SECRET_KEY - <<< "${{secrets.prod_secrets.SECRET_KEY}}"
-          docker secret create DATABASE_USER - <<< "${{secrets.prod_secrets.DATABASE_USER}}"
-          docker secret create DATABASE - <<< "${{secrets.prod_secrets.DATABASE}}"
-          docker secret create DATABASE_HOST - <<< "${{secrets.prod_secrets.DATABASE_HOST}}"
-          docker secret create DATABASE_PORT - <<< "${{secrets.prod_secrets.DATABASE_PORT}}"
-          docker secret create DATABASE_PASSWORD - <<< "${{secrets.prod_secrets.DATABASE_PASSWORD}}"
+          docker secret create ALGORITHM - <<< "${{secrets.ALGORITHM}}"
+          docker secret create ACCESS_TOKEN_EXPIRATION_MINUTES - <<< "${{secrets.ACCESS_TOKEN_EXPIRATION_MINUTES}}"
+          docker secret create SECRET_KEY - <<< "${{secrets.SECRET_KEY}}"
+          docker secret create DATABASE_USER - <<< "${{secrets.DATABASE_USER}}"
+          docker secret create DATABASE - <<< "${{secrets.DATABASE}}"
+          docker secret create DATABASE_HOST - <<< "${{secrets.DATABASE_HOST}}"
+          docker secret create DATABASE_PORT - <<< "${{secrets.DATABASE_PORT}}"
+          docker secret create DATABASE_PASSWORD - <<< "${{secrets.DATABASE_PASSWORD}}"
 
           docker service create --name fast-app \
             --secret create ALGORITHM \
