@@ -73,14 +73,14 @@ jobs:
       - name: Manage Docker Secrets
         run: |
 
-          echo ${{secrets.ALGORITHM}} >> /tmp/secrets.txt
-          echo ${{secrets.ACCESS_TOKEN_EXPIRATION_MINUTES}} >> /tmp/secrets.txt
-          echo ${{secrets.SECRET_KEY}} >> /tmp/secrets.txt
-          echo ${{secrets.DATABASE_USER}} >> /tmp/secrets.txt
-          echo ${{secrets.DATABASE_HOST}} >> /tmp/secrets.txt
-          echo ${{secrets.DATABASE_PORT}} >> /tmp/secrets.txt
-          echo ${{secrets.DATABASE_PASSWORD}} >> /tmp/secrets.txt
-          echo ${{ secrets.DOCKERHUB_USERNAME }} >> /tmp/secrets.txt
+          echo ALGORITHM=${{secrets.ALGORITHM}} >> /tmp/secrets.txt
+          echo ACCESS_TOKEN_EXPIRATION_MINUTES${{secrets.ACCESS_TOKEN_EXPIRATION_MINUTES}} >> /tmp/secrets.txt
+          echo SECRET_KEY=${{secrets.SECRET_KEY}} >> /tmp/secrets.txt
+          echo DATABASE_USER=${{secrets.DATABASE_USER}} >> /tmp/secrets.txt
+          echo DATABASE_HOST=${{secrets.DATABASE_HOST}} >> /tmp/secrets.txt
+          echo DATABASE_PORT=${{secrets.DATABASE_PORT}} >> /tmp/secrets.txt
+          echo DATABASE_PASSWORD=${{secrets.DATABASE_PASSWORD}} >> /tmp/secrets.txt
+          echo DOCKERHUB_USERNAME=${{ secrets.DOCKERHUB_USERNAME }} >> /tmp/secrets.txt
            
       - name: Deploy to Docker Swarm
         run: |
