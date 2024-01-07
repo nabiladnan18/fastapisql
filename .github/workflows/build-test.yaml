@@ -108,4 +108,4 @@ jobs:
         -e DATABASE_PASSWORD="${DATABASE_PASSWORD}" \
         -e DOCKERHUB_USERNAME="${DOCKERHUB_USERNAME}" \
         -e DOCKHERHUB_TOKEN="${DOCKHERHUB_TOKEN}" \
-        ${{secrets.DOCKERHUB_USERNAME}}/fastapisql:latest
+        nadnan18/fastapisql:latest
