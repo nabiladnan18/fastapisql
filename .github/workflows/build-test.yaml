@@ -82,6 +82,15 @@ jobs:
           echo DATABASE_PASSWORD=${{secrets.DATABASE_PASSWORD}} >> /tmp/secrets.txt
           echo DOCKERHUB_USERNAME=${{ secrets.DOCKERHUB_USERNAME }} >> /tmp/secrets.txt
            
+      - name: Close service if it exists
+        run: |
+          if docker service inspect fast-app" &> /dev/null; then
+            echo "::set-output name=service_exists::true"
+            docker service rm fast-app
+          else
+            echo "::set-output name=service_exists::false"
+          fi
+           
       - name: Deploy to Docker Swarm
         run: |
           docker service create --name fast-app --network defstack_default \
