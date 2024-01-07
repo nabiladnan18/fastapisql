@@ -72,26 +72,19 @@ jobs:
     steps:
       - name: Manage Docker Secrets
         run: |
-          echo ${{secrets.ALGORITHM}} | docker secret create ALGORITHM -
-          echo ${{secrets.ACCESS_TOKEN_EXPIRATION_MINUTES}} | docker secret create ACCESS_TOKEN_EXPIRATION_MINUTES -
-          echo ${{secrets.SECRET_KEY}} | docker secret create SECRET_KEY -
-          echo ${{secrets.DATABASE_USER}} | docker secret create DATABASE_USER -
-          echo ${{secrets.DATABASE_HOST}} | docker secret create DATABASE_HOST -
-          echo ${{secrets.DATABASE_PORT}} | docker secret create DATABASE_PORT -
-          echo ${{secrets.DATABASE_PASSWORD}} | docker secret create DATABASE_PASSWORD -
-          echo ${{ secrets.DOCKERHUB_USERNAME }} | docker secret create DOCKERHUB_USERNAME -
+
+          echo ${{secrets.ALGORITHM}} >> /tmp/secrets.txt
+          echo ${{secrets.ACCESS_TOKEN_EXPIRATION_MINUTES}} >> /tmp/secrets.txt
+          echo ${{secrets.SECRET_KEY}} >> /tmp/secrets.txt
+          echo ${{secrets.DATABASE_USER}} >> /tmp/secrets.txt
+          echo ${{secrets.DATABASE_HOST}} >> /tmp/secrets.txt
+          echo ${{secrets.DATABASE_PORT}} >> /tmp/secrets.txt
+          echo ${{secrets.DATABASE_PASSWORD}} >> /tmp/secrets.txt
+          echo ${{ secrets.DOCKERHUB_USERNAME }} >> /tmp/secrets.txt
            
-      
       - name: Deploy to Docker Swarm
         run: |
           docker service create --name fast-app --network defstack \
-          --secret ALGORITHM \
-          --secret ACCESS_TOKEN_EXPIRATION_MINUTES \
-          --secret SECRET_KEY \
-          --secret DATABASE_USER \
-          --secret DATABASE_HOST \
-          --secret DATABASE_PORT \
-          --secret DATABASE_PASSWORD \
-          --secret DOCKERHUB_USERNAME \
+          -- secret source=/tmp/secrets.txt \
           --publish published=8080,target=80 \
           ${{ secrets.DOCKERHUB_USERNAME }}/fastapisql:latest
