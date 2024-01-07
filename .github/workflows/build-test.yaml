@@ -72,21 +72,14 @@ jobs:
     steps:
       - name: Manage Docker Secrets
         run: |
-          SECRETS=("ALGORITHM" "ACCESS_TOKEN_EXPIRATION_MINUTES" "SECRET_KEY" "DATABASE_USER" "DATABASE_HOST" "DATABASE_PORT" "DATABASE_PASSWORD" "DOCKERHUB_USERNAME")
-        
-          for secret_name in "${SECRETS[@]}"; do
-            echo "Deleting secret: $secret_name"
-            docker secret rm $secret_name -
-          done
-               
-          # echo ${{secrets.ALGORITHM}} | docker secret create ALGORITHM -
-          # echo ${{secrets.ACCESS_TOKEN_EXPIRATION_MINUTES}} | docker secret create ACCESS_TOKEN_EXPIRATION_MINUTES -
-          # echo ${{secrets.SECRET_KEY}} | docker secret create SECRET_KEY -
-          # echo ${{secrets.DATABASE_USER}} | docker secret create DATABASE_USER -
-          # echo ${{secrets.DATABASE_HOST}} | docker secret create DATABASE_HOST -
-          # echo ${{secrets.DATABASE_PORT}} | docker secret create DATABASE_PORT -
-          # echo ${{secrets.DATABASE_PASSWORD}} | docker secret create DATABASE_PASSWORD -
-          # echo ${{ secrets.DOCKERHUB_USERNAME }} | docker secret create DOCKERHUB_USERNAME -
+          echo ${{secrets.ALGORITHM}} | docker secret create ALGORITHM -
+          echo ${{secrets.ACCESS_TOKEN_EXPIRATION_MINUTES}} | docker secret create ACCESS_TOKEN_EXPIRATION_MINUTES -
+          echo ${{secrets.SECRET_KEY}} | docker secret create SECRET_KEY -
+          echo ${{secrets.DATABASE_USER}} | docker secret create DATABASE_USER -
+          echo ${{secrets.DATABASE_HOST}} | docker secret create DATABASE_HOST -
+          echo ${{secrets.DATABASE_PORT}} | docker secret create DATABASE_PORT -
+          echo ${{secrets.DATABASE_PASSWORD}} | docker secret create DATABASE_PASSWORD -
+          echo ${{ secrets.DOCKERHUB_USERNAME }} | docker secret create DOCKERHUB_USERNAME -
            
       
       - name: Deploy to Docker Swarm
