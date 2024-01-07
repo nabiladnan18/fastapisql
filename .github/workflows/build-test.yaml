@@ -19,7 +19,6 @@ jobs:
       DATABASE_PASSWORD: ${{secrets.DATABASE_PASSWORD}}
       TEST_DATABASE_PORT: ${{secrets.TEST_DATABASE_PORT}}
       TEST_DATABASE: ${{secrets.TEST_DATABASE}}
-
     services:
       postgres:
         image: postgres:latest
@@ -33,7 +32,6 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
-
     runs-on: self-hosted
     steps:
       - name: Checkout main repository
@@ -65,6 +63,7 @@ jobs:
           context: .
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/fastapisql:latest
+  
   test-deployment:
     needs: test
     environment:
@@ -79,9 +78,8 @@ jobs:
       DATABASE_PORT: ${{secrets.DATABASE_PORT}}
       DATABASE_PASSWORD: ${{secrets.DATABASE_PASSWORD}}
       DOCKERHUB_USERNAME: ${{secrets.DOCKERHUB_USERNAME}}
-      DOCKHERHUB_TOKEN: ${{secrets.DOCKERHUB_TOKEN}}
+      DOCKERHUB_TOKEN: ${{secrets.DOCKERHUB_TOKEN}}
     runs-on: self-hosted
-    
     steps:
     - name: Delete old docker container
       run: sudo docker rm -f ${{secrets.DOCKERHUB_USERNAME}}/fastapisql:latest || true
@@ -93,7 +91,7 @@ jobs:
         password: ${{secrets.DOCKERHUB_TOKEN}}
 
     - name: Pull image
-      run: docker pull nadnan18/fastapisql:latest
+      run: docker pull ${{secrets.DOCKERHUB_USERNAME}}/fastapisql:latest
         
     - name: Run docker
       run: |
@@ -107,5 +105,5 @@ jobs:
         -e DATABASE_PORT="${DATABASE_PORT} "\
         -e DATABASE_PASSWORD="${DATABASE_PASSWORD}" \
         -e DOCKERHUB_USERNAME="${DOCKERHUB_USERNAME}" \
-        -e DOCKHERHUB_TOKEN="${DOCKHERHUB_TOKEN}" \
-        nadnan18/fastapisql:latest
+        -e DOCKERHUB_TOKEN="${DOCKERHUB_TOKEN}" \
+        ${{secrets.DOCKERHUB_USERNAME}}/fastapisql:latest
