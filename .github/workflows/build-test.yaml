@@ -66,37 +66,30 @@ jobs:
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/fastapisql:latest
   test-deployment:
+    needs: test
     environment:
       name: test_env_variables
+    env:
+      ALGORITHM: ${{secrets.ALGORITHM}}
+      ACCESS_TOKEN_EXPIRATION_MINUTES: ${{secrets.ACCESS_TOKEN_EXPIRATION_MINUTES}}
+      SECRET_KEY: ${{secrets.SECRET_KEY}}
+      DATABASE_USER: ${{secrets.DATABASE_USER}}
+      DATABASE: ${{secrets.DATABASE}}
+      DATABASE_HOST: ${{secrets.DATABASE_HOST}}
+      DATABASE_PORT: ${{secrets.DATABASE_PORT}}
+      DATABASE_PASSWORD: ${{secrets.DATABASE_PASSWORD}}
+      DOCKERHUB_USERNAME: ${{secrets.DOCKERHUB_USERNAME}}
+      DOCKHERHUB_TOKEN: ${{secrets.DOCKERHUB_TOKEN}}
     runs-on: self-hosted
+    
     steps:
-      - name: Manage Docker Secrets
-        run: |
-          
-          sudo rm -rf /tmp/secrets.txt
-          
-          echo ALGORITHM=${{secrets.ALGORITHM}} >> /tmp/secrets.txt
-          echo ACCESS_TOKEN_EXPIRATION_MINUTES${{secrets.ACCESS_TOKEN_EXPIRATION_MINUTES}} >> /tmp/secrets.txt
-          echo SECRET_KEY=${{secrets.SECRET_KEY}} >> /tmp/secrets.txt
-          echo DATABASE_USER=${{secrets.DATABASE_USER}} >> /tmp/secrets.txt
-          echo DATABASE_HOST=${{secrets.DATABASE_HOST}} >> /tmp/secrets.txt
-          echo DATABASE_PORT=${{secrets.DATABASE_PORT}} >> /tmp/secrets.txt
-          echo DATABASE_PASSWORD=${{secrets.DATABASE_PASSWORD}} >> /tmp/secrets.txt
-          echo DOCKERHUB_USERNAME=${{ secrets.DOCKERHUB_USERNAME }} >> /tmp/secrets.txt
+    - name: Delete old docker container
+      run: sudo docker rm -f cicd-pipeline-container || true
            
-      - name: Close service if it exists
-        run: |
-          if docker service inspect fast-app &> /dev/null; then
-            echo "Service exists"
-            echo "Deleting service"
-            docker service rm fast-app
-          else
-            echo "No such service exists"
-          fi
-           
-      - name: Deploy to Docker Swarm
-        run: |
-          docker service create --name fast-app --network defstack_default \
-          --secret source=/tmp/secrets.txt, target=/app/.env \
-          --publish published=8080,target=80 \
-          $DOCKERHUB_USERNAME/fastapisql:latest
+    - name: Pull docker image
+      run: |
+        docker pull $DOCKERHUB_USERNAME/fastapi:latest
+        
+    - name: Run docker
+      run: |
+        docker run -d $DOCKERHUB_USERNAME/fastapi:latest
