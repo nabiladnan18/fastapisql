@@ -85,6 +85,6 @@ jobs:
       - name: Deploy to Docker Swarm
         run: |
           docker service create --name fast-app --network defstack_default \
-          -- secret source=/tmp/secrets.txt, target=defstack_default-secrets/secrets.txt \
+          -- secret source=/tmp/secrets.txt, target=/defstack_default-secrets/secrets.txt \
           --publish published=8080,target=80 \
           ${{ secrets.DOCKERHUB_USERNAME }}/fastapisql:latest
