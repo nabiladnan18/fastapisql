@@ -95,7 +95,7 @@ jobs:
         
     - name: Run docker
       run: |
-        docker run -d --name fast-app \
+        docker run -d --name fast-app --network nabnetwork \
         -e ALGORITHM="${ALGORITHM}" \
         -e ACCESS_TOKEN_EXPIRATION_MINUTES="${ACCESS_TOKEN_EXPIRATION_MINUTES}" \
         -e SECRET_KEY="${SECRET_KEY}" \
