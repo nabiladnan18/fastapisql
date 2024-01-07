@@ -84,7 +84,7 @@ jobs:
            
       - name: Close service if it exists
         run: |
-          if docker service inspect fast-app" &> /dev/null; then
+          if docker service inspect fast-app &> /dev/null; then
             echo "::set-output name=service_exists::true"
             docker service rm fast-app
           else
