@@ -72,11 +72,6 @@ jobs:
     steps:
       - name: Manage Docker Secrets
         run: |
-        
-          secret_exists() {
-            docker secret inspect $1 &> /dev/null
-          }
-        
           SECRETS=("ALGORITHM" "ACCESS_TOKEN_EXPIRATION_MINUTES" "SECRET_KEY" "DATABASE_USER" "DATABASE_HOST" "DATABASE_PORT" "DATABASE_PASSWORD" "DOCKERHUB_USERNAME")
         
           for secret_name in "${SECRETS[@]}"; do
