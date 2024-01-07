@@ -10,6 +10,15 @@ jobs:
   deploy:
     environment:
       name: prod_secrets
+    env:
+      ALGORITHM: ${{secrets.ALGORITHM}}
+      ACCESS_TOKEN_EXPIRATION_MINUTES: ${{secrets.ACCESS_TOKEN_EXPIRATION_MINUTES}}
+      SECRET_KEY: ${{secrets.SECRET_KEY}}
+      DATABASE_USER: ${{secrets.DATABASE_USER}}
+      DATABASE: ${{secrets.DATABASE}}
+      DATABASE_HOST: ${{secrets.DATABASE_HOST}}
+      DATABASE_PORT: ${{secrets.DATABASE_PORT}}
+      DATABASE_PASSWORD: ${{secrets.DATABASE_PASSWORD}}
     runs-on: self-hosted
     steps:
       - name: Delete old docker container
