@@ -80,13 +80,8 @@ jobs:
           SECRETS=("ALGORITHM" "ACCESS_TOKEN_EXPIRATION_MINUTES" "SECRET_KEY" "DATABASE_USER" "DATABASE_HOST" "DATABASE_PORT" "DATABASE_PASSWORD" "DOCKERHUB_USERNAME")
         
           for secret_name in "${SECRETS[@]}"; do
-            if secret_exists $secret_name; then
-              echo "Deleting secret: $secret_name"
-              docker secret rm $secret_name -
-            else
-              echo "Create new secret: $secret name"
-              echo ${{ secrets.${secret_name} }} | docker secret create $secret_name -
-            fi
+            echo "Deleting secret: $secret_name"
+            docker secret rm $secret_name -
           done
                
           # echo ${{secrets.ALGORITHM}} | docker secret create ALGORITHM -
