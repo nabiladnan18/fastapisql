@@ -71,15 +71,32 @@ jobs:
     runs-on: self-hosted
     steps:
       - name: Manage Docker Secrets
-        run: |       
-          echo ${{secrets.ALGORITHM}} | docker secret create ALGORITHM -
-          echo ${{secrets.ACCESS_TOKEN_EXPIRATION_MINUTES}} | docker secret create ACCESS_TOKEN_EXPIRATION_MINUTES -
-          echo ${{secrets.SECRET_KEY}} | docker secret create SECRET_KEY -
-          echo ${{secrets.DATABASE_USER}} | docker secret create DATABASE_USER -
-          echo ${{secrets.DATABASE_HOST}} | docker secret create DATABASE_HOST -
-          echo ${{secrets.DATABASE_PORT}} | docker secret create DATABASE_PORT -
-          echo ${{secrets.DATABASE_PASSWORD}} | docker secret create DATABASE_PASSWORD -
-          echo ${{ secrets.DOCKERHUB_USERNAME }} | docker secret create DOCKERHUB_USERNAME -
+        run: |
+        
+          secret_exists() {
+            docker secret inspect $1 &> /dev/null
+          }
+        
+          SECRETS=("ALGORITHM" "ACCESS_TOKEN_EXPIRATION_MINUTES" "SECRET_KEY" "DATABASE_USER" "DATABASE_HOST" "DATABASE_PORT" "DATABASE_PASSWORD" "DOCKERHUB_USERNAME")
+        
+          for secret_name in "${SECRETS[@]}"; do
+            if secret_exists $secret_name; then
+              echo "Deleting secret: $secret_name"
+              docker secret rm $secret_name -
+            else
+              echo "Create new secret: $secret name"
+              echo ${{ secrets.${secret_name} }} | docker secret create $secret_name -
+            fi
+          done
+               
+          # echo ${{secrets.ALGORITHM}} | docker secret create ALGORITHM -
+          # echo ${{secrets.ACCESS_TOKEN_EXPIRATION_MINUTES}} | docker secret create ACCESS_TOKEN_EXPIRATION_MINUTES -
+          # echo ${{secrets.SECRET_KEY}} | docker secret create SECRET_KEY -
+          # echo ${{secrets.DATABASE_USER}} | docker secret create DATABASE_USER -
+          # echo ${{secrets.DATABASE_HOST}} | docker secret create DATABASE_HOST -
+          # echo ${{secrets.DATABASE_PORT}} | docker secret create DATABASE_PORT -
+          # echo ${{secrets.DATABASE_PASSWORD}} | docker secret create DATABASE_PASSWORD -
+          # echo ${{ secrets.DOCKERHUB_USERNAME }} | docker secret create DOCKERHUB_USERNAME -
            
       
       - name: Deploy to Docker Swarm
