@@ -87,15 +87,16 @@ jobs:
       - name: Close service if it exists
         run: |
           if docker service inspect fast-app &> /dev/null; then
-            echo "::set-output name=service_exists::true"
+            echo "Service exists"
+            echo "Deleting service"
             docker service rm fast-app
           else
-            echo "::set-output name=service_exists::false"
+            echo "No such service exists"
           fi
            
       - name: Deploy to Docker Swarm
         run: |
           docker service create --name fast-app --network defstack_default \
-          --secret source=/tmp/secrets.txt \
+          --secret source=/tmp/secrets.txt, target=/app/.env \
           --publish published=8080,target=80 \
           $DOCKERHUB_USERNAME/fastapisql:latest
