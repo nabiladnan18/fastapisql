@@ -93,7 +93,7 @@ jobs:
         password: ${{secrets.DOCKERHUB_TOKEN}}
 
     - name: Pull image
-      run: docker pull ${{ secrets.DOCKERHUB_USERNAME }}/fastapisql:latest
+      run: docker pull nadnan18/fastapisql:latest
         
     - name: Run docker
       run: |
