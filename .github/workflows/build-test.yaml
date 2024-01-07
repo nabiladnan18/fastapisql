@@ -80,49 +80,30 @@ jobs:
           fi
 
       - name: Manage Docker Secrets
-        run: |
-          # Define the secrets
-          SECRETS=("ALGORITHM" "ACCESS_TOKEN_EXPIRATION_MINUTES" "SECRET_KEY" "DATABASE_USER" "DATABASE" "DATABASE_HOST" "DATABASE_PORT" "DATABASE_PASSWORD")
-
-          # Check and remove existing secrets
-          for secret in "${SECRETS[@]}"; do
-          if docker secret ls | grep -q "$secret"; then
-              echo "Removing existing secret: $secret"
-              docker secret rm $secret
-          fi
-          done
-          
-          docker secret create ALGORITHM="${{secrets.ALGORITHM}}"
-          docker secret create ACCESS_TOKEN_EXPIRATION_MINUTES="${{secrets.ACCESS_TOKEN_EXPIRATION_MINUTES}}"
-          docker secret create SECRET_KEY="${{secrets.SECRET_KEY}}"
-          docker secret create DATABASE_USER="${{secrets.DATABASE_USER}}"
-          docker secret create DATABASE_HOST="${{secrets.DATABASE_HOST}}"
-          docker secret create DATABASE_PORT="${{secrets.DATABASE_PORT}}"
-          docker secret create DATABASE_PASSWORD="${{secrets.DATABASE_PASSWORD}}"
+        run: |       
+          echo ${{secrets.ALGORITHM}} | docker secret create ALGORITHM -
+          echo ${{secrets.ACCESS_TOKEN_EXPIRATION_MINUTES}} | docker secret create ACCESS_TOKEN_EXPIRATION_MINUTES -
+          echo ${{secrets.SECRET_KEY}} | docker secret create SECRET_KEY -
+          echo ${{secrets.DATABASE_USER}} | docker secret create DATABASE_USER -
+          echo ${{secrets.DATABASE_HOST}} | docker secret create DATABASE_HOST -
+          echo ${{secrets.DATABASE_PORT}} | docker secret create DATABASE_PORT -
+          echo ${{secrets.DATABASE_PASSWORD}} | docker secret create DATABASE_PASSWORD -
+          echo ${{ secrets.DOCKERHUB_USERNAME }} | docker secret create DOCKERHUB_USERNAME -
            
       
       - name: Deploy to Docker Swarm
         run: |
-
           docker service create --name fast-app \
-            --secret ALGORITHM \
-            --secret ACCESS_TOKEN_EXPIRATION_MINUTES \
-            --secret SECRET_KEY \
-            --secret DATABASE_USER \
-            --secret DATABASE \
-            --secret DATABASE_HOST \
-            --secret DATABASE_PORT \
-            --secret DATABASE_PASSWORD \
-            --env ALGORITHM_FILE=/run/secrets/ALGORITHM \
-            --env ACCESS_TOKEN_EXPIRATION_MINUTES_FILE=/run/secrets/ACCESS_TOKEN_EXPIRATION_MINUTES \
-            --env SECRET_KEY_FILE=/run/secrets/SECRET_KEY \
-            --env DATABASE_USER_FILE=/run/secrets/DATABASE_USER \
-            --env DATABASE_FILE=/run/secrets/DATABASE \
-            --env DATABASE_HOST_FILE=/run/secrets/DATABASE_HOST \
-            --env DATABASE_PORT_FILE=/run/secrets/DATABASE_PORT \
-            --env DATABASE_PASSWORD_FILE=/run/secrets/DATABASE_PASSWORD \
-            --publish published=8080,target=80 \
-            ${{ secrets.DOCKERHUB_USERNAME }}/fastapisql:latest
+          --secret ALGORITHM \
+          --secret ACCESS_TOKEN_EXPIRATION_MINUTES \
+          --secret SECRET_KEY \
+          --secret DATABASE_USER \
+          --secret DATABASE_HOST \
+          --secret DATABASE_PORT \
+          --secret DATABASE_PASSWORD \
+          --secret DOCKERHUB_USERNAME \
+          --publish published=8080,target=80 \
+          ${{ secrets.DOCKERHUB_USERNAME }}/fastapisql:latest
 
           sleep 10
           docker ps fast-app
