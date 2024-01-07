@@ -19,7 +19,6 @@ jobs:
       DATABASE_PASSWORD: ${{secrets.DATABASE_PASSWORD}}
       TEST_DATABASE_PORT: ${{secrets.TEST_DATABASE_PORT}}
       TEST_DATABASE: ${{secrets.TEST_DATABASE}}
-
     services:
       postgres:
         image: postgres:latest
@@ -33,7 +32,6 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
-
     runs-on: self-hosted
     steps:
       - name: Checkout main repository
