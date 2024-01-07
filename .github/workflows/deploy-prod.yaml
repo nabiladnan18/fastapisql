@@ -31,15 +31,6 @@ jobs:
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/fastapisql:v0.1
 
-      - name: Check and Initialise Docker Swarm
-        run: |
-          if docker info | grep -q "Swarm: active"; then
-            echo "Docker Swarm is already active."
-          else
-            echo "Initialising Docker Swarm..."
-            docker swarm init
-          fi
-
       - name: Manage Docker Secrets
         run: |
           # Define the secrets

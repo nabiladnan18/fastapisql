@@ -70,15 +70,6 @@ jobs:
       name: test_env_variables
     runs-on: self-hosted
     steps:
-      - name: Check and Initialise Docker Swarm
-        run: |
-          if docker info | grep -q "Swarm: active"; then
-            echo "Docker Swarm is already active."
-            else
-            echo "Initialising Docker Swarm..."
-            docker swarm init
-          fi
-
       - name: Manage Docker Secrets
         run: |       
           echo ${{secrets.ALGORITHM}} | docker secret create ALGORITHM -
@@ -93,7 +84,7 @@ jobs:
       
       - name: Deploy to Docker Swarm
         run: |
-          docker service create --name fast-app \
+          docker service create --name fast-app --network defstack \
           --secret ALGORITHM \
           --secret ACCESS_TOKEN_EXPIRATION_MINUTES \
           --secret SECRET_KEY \
@@ -104,6 +95,3 @@ jobs:
           --secret DOCKERHUB_USERNAME \
           --publish published=8080,target=80 \
           ${{ secrets.DOCKERHUB_USERNAME }}/fastapisql:latest
-
-          sleep 10
-          docker ps fast-app
